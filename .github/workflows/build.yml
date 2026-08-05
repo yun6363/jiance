@@ -1,0 +1,33 @@
+名称: 构建 EXE
+
+触发条件:
+推送:
+ 分支: [ main ]
+ workflow_dispatch:   # 允许手动触发
+
+作业:
+构建:
+    runs-on: windows-latest
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        用途: actions/setup-python@v5
+        with:
+Python版本: '3.10'
+
+      - 名称: 安装依赖
+        运行: |
+          使用 pip 安装 pyinstaller、pandas 和 openpyxl
+
+      - 名称: 打包为 EXE
+        run: |
+          运行 pyinstaller 命令：--onefile --name 光功率检查 光功率检查.py
+
+      - 名称: 上传构建产物
+用途: actions/upload-artifact@v4
+        with:
+          名称: 光功率检查-exe
+路径: dist/光功率检查.exe
