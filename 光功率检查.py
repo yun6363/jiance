@@ -37,13 +37,11 @@ def check_power(avg, upper, lower):
     """
     if avg is None:
         return None
-    # 特殊值 -40 直接丢弃（不参与范围判断）
-    if abs(avg + 40.0) < 1e-6:
+    # 丢弃特殊值：-40 或 0（包含0.0）
+    if abs(avg + 40.0) < 1e-6 or abs(avg) < 1e-6:
         return '丢弃'
-    # 若上下限缺失，无法判断
     if pd.isna(upper) or pd.isna(lower):
         return None
-    # 严格判断：下限 < avg < 上限 为正常，否则按超上限或低下限细分
     if lower < avg < upper:
         return '正常'
     elif avg >= upper:
@@ -51,7 +49,6 @@ def check_power(avg, upper, lower):
     elif avg <= lower:
         return '异常-光弱'
     else:
-        # 理论不会到这里，但以防万一
         return '异常'
 
 def process_excel(input_file):
@@ -83,12 +80,12 @@ def process_excel(input_file):
 
 def main():
     print('=' * 50)
-    print('光功率检查工具 v2.0')
+    print('光功率检查工具 v2.1')
     print('判断规则：')
     print('  正常   ：下限 < 平均值 < 上限')
     print('  异常-光强：平均值 ≥ 上限')
     print('  异常-光弱：平均值 ≤ 下限')
-    print('  丢弃   ：平均值 = -40')
+    print('  丢弃   ：平均值等于 -40 或 0（包含0.0）')
     print('多值格式：x,x,x 自动取平均值')
     print('=' * 50)
     while True:
